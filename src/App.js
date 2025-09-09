@@ -3,10 +3,9 @@ import Index from './pages/index'
 
 function App() {
   return (
-    <Router>
+    <Router basename="/portfolio">
       <Routes>
         <Route path="/" element={<Index />} />
-     
       </Routes>
     </Router>
   );

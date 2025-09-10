@@ -1174,7 +1174,7 @@ const Index = () => {
             <div className="copyright text-center ">
               <p>
                 © <span>Copyright</span>{" "}
-                <strong className="px-1 sitename">iPortfolio</strong>{" "}
+                <strong className="px-1 sitename">dev-kanhaiya</strong>{" "}
                 <span>All Rights Reserved</span>
               </p>
             </div>

@@ -256,11 +256,11 @@ const Index = () => {
       typedInstance.current = new Typed(typedEl.current, {
         strings: [
           "Backend Developer",
-          "Full Stack Developer",
           "REST API Developer",
+          "Software Developer",
+          "Full Stack Developer",
           "Database Designer",
           "PostgreSQL & MySQL Expert",
-          "Software Developer",
         ],
         typeSpeed: 50,
         backSpeed: 25,
@@ -425,7 +425,7 @@ const Index = () => {
                   >
                     <div className="hero-text">
                       <h1>
-                        Krishna-<span className="accent-text">Dev</span>
+                        I'm <span className="accent-text">Krishna</span>
                       </h1>
                       <h2>Kanhaiya</h2>
                       {/* <p className="lead">I'm a <span className="typed" data-typed-items="UI/UX Designer, Web Developer, Brand Strategist, Creative Director" /></p> */}

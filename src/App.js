@@ -3,7 +3,7 @@ import Index from './pages/index'
 
 function App() {
   return (
-    <Router basename="/portfolio">
+    <Router basename="/">
       <Routes>
         <Route path="/" element={<Index />} />
       </Routes>

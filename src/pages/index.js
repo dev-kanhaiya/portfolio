@@ -1,78 +1,227 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.css";
 import "../styles/app.css";
 import AOS from "aos";
+import "aos/dist/aos.css";
 import "glightbox/dist/css/glightbox.min.css";
 import "swiper/css";
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper } from "swiper/react";
 import Typed from "typed.js";
 import PureCounter from "@srexi/purecounterjs";
 import "waypoints/lib/noframework.waypoints";
 import imagesLoaded from "imagesloaded";
 import Isotope from "isotope-layout";
-import "aos/dist/aos.css";
 import GLightbox from "glightbox";
-import "glightbox/dist/css/glightbox.min.css";
 import { Waypoint } from "react-waypoint";
 
+/* ---------- Constants ---------- */
+const EMAIL = "krishnarathaur0001@gmail.com";
+const MAILTO = `mailto:${EMAIL}?subject=Job%20Opportunity&body=Hi%20Krishna,%0D%0A%0D%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20connect.`;
+const LINKEDIN = "https://www.linkedin.com/in/krishna-rathaur";
+const GITHUB = "https://github.com/dev-kanhaiya";
+
+/* ---------- Data ---------- */
+// NOTE: percentages are self-ratings, adjust them to what you are comfortable defending.
 const skillsData = {
   frontend: [
-    {
-      name: "HTML/CSS",
-      percent: 90,
-      tooltip:
-        "Expert level knowledge of semantic HTML5 and modern CSS3 techniques",
-    },
-    {
-      name: "JavaScript",
-      percent: 85,
-      tooltip:
-        "Strong proficiency in ES6+, DOM manipulation, and modern frameworks",
-    },
-    {
-      name: "React",
-      percent: 80,
-      tooltip:
-        "Experience with React hooks, state management, and component architecture",
-    },{
-  name: "Bootstrap",
-  percent: 75,
-  tooltip: "Responsive design framework for fast, mobile-first web development",
-},
+    { name: "HTML/CSS", percent: 90, tooltip: "Semantic HTML5 and modern, responsive CSS3" },
+    { name: "JavaScript", percent: 85, tooltip: "ES6+, DOM manipulation and modern frameworks" },
+    { name: "React", percent: 80, tooltip: "Hooks, state management and component architecture" },
+    { name: "Bootstrap", percent: 75, tooltip: "Responsive, mobile-first UI development" },
   ],
   backend: [
-    {
-      name: "PHP",
-      percent: 80,
-      tooltip: "Backend development using PHP and database-driven applications",
-    },
-    {
-      name: "Node.js",
-      percent: 70,
-      tooltip: "Server-side JavaScript development with Express and REST APIs",
-    },
-
-    // { name: "Python", percent: 70, tooltip: "Python development with Django and data analysis tools" },
-    {
-      name: "MySQL/PostgreSQL",
-      percent: 72,
-      tooltip: "Database design, optimization, and complex queries",
-    },
-    {
-      name: "Next.js",
-      percent: 80,
-      tooltip:
-        "Full-stack React framework for SSR, routing, and API integration",
-    },
-    {
-      name: "Express.js",
-      percent: 70,
-      tooltip: "Backend framework for building REST APIs and server-side logic",
-    },
+    { name: "Laravel", percent: 85, tooltip: "REST APIs, RBAC, admin panels, payment-integrated apps" },
+    { name: "PHP", percent: 80, tooltip: "Backend development and database-driven applications" },
+    { name: "Node.js / Express.js", percent: 70, tooltip: "Server-side JavaScript and REST APIs" },
+    { name: "MySQL/PostgreSQL", percent: 72, tooltip: "Database design, query optimization and complex queries" },
+    { name: "Redis", percent: 65, tooltip: "Caching to bring API response time down to ~50 ms" },
+  ],
+  devops: [
+    { name: "VPS Setup & Hosting", percent: 75, tooltip: "Provisioned a VPS from scratch and took a Laravel app live" },
+    { name: "Nginx", percent: 75, tooltip: "Web server setup and reverse proxy for Laravel APIs" },
+    { name: "CI/CD Pipelines", percent: 75, tooltip: "Automated build and deploy pipelines across multiple projects" },
+    { name: "Git & GitHub", percent: 80, tooltip: "Version control and team collaboration workflows" },
   ],
 };
 
+const categoryTitles = {
+  frontend: "Front-end Development",
+  backend: "Back-end Development",
+  devops: "DevOps & Deployment",
+};
+
+const sidebarSkills = [
+  ["Laravel / PHP", 85],
+  ["JavaScript", 85],
+  ["React.js", 80],
+  ["MySQL/PostgreSQL", 72],
+];
+
+const experience = [
+  {
+    role: "Visiting Faculty, Web Development",
+    org: "HRIT University, Ghaziabad",
+    period: "July 2026 – Present",
+    points: [
+      "Teach HTML/CSS, JavaScript and PHP/Laravel to 50+ first-year BCA students.",
+      "Design course content and hands-on projects; mentor students on debugging and project workflow.",
+    ],
+  },
+  {
+    role: "Laravel Developer",
+    org: "The Night Marketer",
+    period: "June 2026 – July 2026",
+    points: [
+      "Built and maintained Laravel backend modules with reusable CRUD components, reducing repetitive development effort.",
+      "Diagnosed and fixed bugs in live modules, reducing recurring support issues; worked in a team using Git.",
+    ],
+  },
+  {
+    role: "Laravel Developer (Project-Based)",
+    org: "IQFin",
+    period: "March 2026 – May 2026",
+    points: [
+      "Built secure REST APIs and role-based access control across enquiry, inventory and policy management systems.",
+      "Designed reusable Laravel components for loan policy workflows, removing duplicate logic across modules.",
+      "Delivered enquiry and inventory features from requirements to production deployment.",
+    ],
+  },
+  {
+    role: "Full Stack Developer",
+    org: "Master-Tec Universe",
+    period: "July 2025 – February 2026",
+    points: [
+      "Developed full-stack applications with Laravel, JavaScript and MySQL, from database design to UI delivery.",
+      "Implemented Redis caching and optimized queries, bringing API response time to ~50 ms.",
+      "Integrated REST APIs and resolved production issues, improving reliability for end users.",
+    ],
+  },
+  {
+    role: "Software Development Intern (6 months)",
+    org: "Master-Tec Universe",
+    period: "January 2025 – June 2025",
+    points: [
+      "Built web pages and wrote application code using React.js, Node.js and Express.js on live client work, while learning production workflows.",
+    ],
+  },
+];
+
+const resumeProjects = [
+  {
+    name: "EduLife",
+    stack: "Laravel | MySQL | VPS | Nginx",
+    points: [
+      "E-learning platform with student dashboard, admin panel, course management, MCQ tests, session booking, payments and invoices, and email OTP login.",
+      "RBAC for 3 roles: student, teacher and super admin.",
+      "Set up the VPS from scratch and took the Laravel app live.",
+    ],
+  },
+  {
+    name: "Raftaar",
+    stack: "React | Laravel API | Nginx",
+    points: [
+      "Mobile app with a React admin dashboard consuming a Laravel REST API.",
+      "Served the API through an Nginx reverse proxy.",
+    ],
+  },
+  {
+    name: "DigiBuggy",
+    stack: "Laravel | MySQL",
+    points: [
+      "E-commerce platform with a custom PC builder.",
+      "Product, quotation and order modules with a full admin panel.",
+    ],
+  },
+  {
+    name: "IQFin Policy Management System",
+    stack: "Laravel | MySQL",
+    points: ["Loan policy platform with an eligibility engine, reports, filters, search and role-based dashboards."],
+  },
+  {
+    name: "Inventory Management System",
+    stack: "Laravel | MySQL",
+    points: ["Admin and Dealer modules with inventory CRUD, authentication and communication features."],
+  },
+  {
+    name: "Attendance Management System",
+    stack: "PHP | MySQL | JS",
+    points: [
+      "Role-based login for Admin & Users",
+      "CRUD operations via REST APIs",
+      "Secure authentication and attendance management",
+    ],
+  },
+  {
+    name: "Personal Portfolio Website",
+    stack: "React | Express.js | PostgreSQL",
+    points: [
+      "Responsive portfolio showcasing projects and skills",
+      "Dynamic contact form integrated with backend and database",
+    ],
+  },
+];
+
+// Add matching screenshots in public/img/portfolio/ (file names below).
+const portfolioItems = [
+  { title: "EduLife", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-edulife.jpeg", link: "https://edulife.sg" },
+  { title: "DigiBuggy", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-digibuggy.jpeg", link: "https://digibuggy.com" },
+  { title: "IQFin Policy Management", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-iqfin.jpeg", link: "https://iqfin.in" },
+  { title: "Inventory Management System", category: "Backend", filter: "filter-backend", img: "img/portfolio/portfolio-inventory.jpeg", link: "https://iqfin.in/inventory" },
+  { title: "Raftaar", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-raftaar.jpeg", link: "#" },
+  { title: "Attendance Management System", category: "Backend", filter: "filter-backend", img: "img/portfolio/portfolio-attendance.jpeg", link: "https://kanhaiya-dev.gt.tc/" },
+  { title: "Personal Portfolio Website", category: "Frontend", filter: "filter-frontend", img: "img/portfolio/portfolio.jpeg", link: "#" },
+];
+
+const navItems = [
+  ["#hero", "bi-house", "Home"],
+  ["#about", "bi-person", "About"],
+  ["#skills", "bi-gear", "Skills"],
+  ["#resume", "bi-file-earmark-text", "Resume"],
+  ["#portfolio", "bi-images", "Portfolio"],
+  ["#contact", "bi-envelope", "Contact"],
+];
+
+/* ---------- Small components ---------- */
+const SocialLinks = ({ className }) => (
+  <div className={className}>
+    <a href={GITHUB} className="google-plus" target="_blank" rel="noopener noreferrer">
+      <i className="bi bi-github" />
+    </a>
+    <a href={LINKEDIN} className="linkedin" target="_blank" rel="noopener noreferrer">
+      <i className="bi bi-linkedin" />
+    </a>
+    <a
+      href="https://www.instagram.com/kanhaiya.14581?igsh=d3UwOXU4cDN6N3Aw"
+      className="instagram"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i className="bi bi-instagram" />
+    </a>
+    <a href="https://wa.me/918368003925" target="_blank" rel="noopener noreferrer" className="whatsapp">
+      <i className="bi bi-whatsapp" />
+    </a>
+    <a className="envelope" href={MAILTO}>
+      <i className="bi bi-envelope" />
+    </a>
+  </div>
+);
+
+const ResumeItem = ({ title, subtitle, period, points }) => (
+  <div className="resume-item">
+    <h4>{title}</h4>
+    <h5>{subtitle}</h5>
+    {period && <p><em>{period}</em></p>}
+    <ul>
+      {points.map((p, i) => (
+        <li key={i}>{p}</li>
+      ))}
+    </ul>
+  </div>
+);
+
+/* ---------- Page ---------- */
 const Index = () => {
   useEffect(() => {
     const headerToggleBtn = document.querySelector(".header-toggle");
@@ -93,28 +242,6 @@ const Index = () => {
       });
     });
 
-    document
-      .querySelectorAll(".navmenu .toggle-dropdown")
-      .forEach((navmenu) => {
-        navmenu.addEventListener("click", function (e) {
-          e.preventDefault();
-          this.parentNode.classList.toggle("active");
-          this.parentNode.nextElementSibling.classList.toggle(
-            "dropdown-active"
-          );
-          e.stopImmediatePropagation();
-        });
-      });
-
-    const preloader = document.querySelector("#preloader");
-    if (preloader) {
-      window.addEventListener("load", () => {
-        setTimeout(() => {
-          preloader.remove();
-        }, 200);
-      });
-    }
-
     let scrollTop = document.querySelector(".scroll-top");
     function toggleScrollTop() {
       if (scrollTop) {
@@ -132,39 +259,16 @@ const Index = () => {
     window.addEventListener("load", toggleScrollTop);
     document.addEventListener("scroll", toggleScrollTop);
 
-    function aosInit() {
-      AOS.init({
-        duration: 600,
-        easing: "ease-in-out",
-        once: true,
-        mirror: false,
-      });
-    }
-    window.addEventListener("load", aosInit);
-
-    const selectTyped = document.querySelector(".typed");
-    if (selectTyped) {
-      let typed_strings = selectTyped.getAttribute("data-typed-items");
-      typed_strings = typed_strings.split(",");
-      new Typed(".typed", {
-        strings: typed_strings,
-        loop: true,
-        typeSpeed: 100,
-        backSpeed: 50,
-        backDelay: 2000,
-      });
-    }
+    AOS.init({ duration: 600, easing: "ease-in-out", once: true, mirror: false });
 
     new PureCounter();
 
-    let skillsAnimation = document.querySelectorAll(".skills-animation");
-    skillsAnimation.forEach((item) => {
+    document.querySelectorAll(".skills-animation").forEach((item) => {
       new Waypoint({
         element: item,
         offset: "80%",
         handler: function () {
-          let progress = item.querySelectorAll(".progress .progress-bar");
-          progress.forEach((el) => {
+          item.querySelectorAll(".progress .progress-bar").forEach((el) => {
             el.style.width = el.getAttribute("aria-valuenow") + "%";
           });
         },
@@ -172,67 +276,44 @@ const Index = () => {
     });
 
     GLightbox({ selector: ".glightbox" });
-    document
-      .querySelectorAll(".isotope-layout")
-      .forEach(function (isotopeItem) {
-        let layout = isotopeItem.getAttribute("data-layout") ?? "masonry";
-        let filter = isotopeItem.getAttribute("data-default-filter") ?? "*";
-        let sort = isotopeItem.getAttribute("data-sort") ?? "original-order";
 
-        let initIsotope;
-        imagesLoaded(
-          isotopeItem.querySelector(".isotope-container"),
-          function () {
-            initIsotope = new Isotope(
-              isotopeItem.querySelector(".isotope-container"),
-              {
-                itemSelector: ".isotope-item",
-                layoutMode: layout,
-                filter: filter,
-                sortBy: sort,
-              }
-            );
-          }
-        );
+    document.querySelectorAll(".isotope-layout").forEach(function (isotopeItem) {
+      let layout = isotopeItem.getAttribute("data-layout") ?? "masonry";
+      let filter = isotopeItem.getAttribute("data-default-filter") ?? "*";
+      let sort = isotopeItem.getAttribute("data-sort") ?? "original-order";
 
-        isotopeItem
-          .querySelectorAll(".isotope-filters li")
-          .forEach(function (filters) {
-            filters.addEventListener("click", function () {
-              isotopeItem
-                .querySelector(".isotope-filters .filter-active")
-                .classList.remove("filter-active");
-              this.classList.add("filter-active");
-              initIsotope.arrange({ filter: this.getAttribute("data-filter") });
-              if (typeof aosInit === "function") aosInit();
-            });
-          });
+      let initIsotope;
+      imagesLoaded(isotopeItem.querySelector(".isotope-container"), function () {
+        initIsotope = new Isotope(isotopeItem.querySelector(".isotope-container"), {
+          itemSelector: ".isotope-item",
+          layoutMode: layout,
+          filter: filter,
+          sortBy: sort,
+        });
       });
 
-    function initSwiper() {
-      document
-        .querySelectorAll(".init-swiper")
-        .forEach(function (swiperElement) {
-          let config = JSON.parse(
-            swiperElement.querySelector(".swiper-config").innerHTML.trim()
-          );
-          new Swiper(swiperElement, config);
+      isotopeItem.querySelectorAll(".isotope-filters li").forEach(function (filters) {
+        filters.addEventListener("click", function () {
+          isotopeItem
+            .querySelector(".isotope-filters .filter-active")
+            .classList.remove("filter-active");
+          this.classList.add("filter-active");
+          initIsotope.arrange({ filter: this.getAttribute("data-filter") });
+          AOS.refresh();
         });
-    }
-    window.addEventListener("load", initSwiper);
+      });
+    });
 
     window.addEventListener("load", function () {
-      if (window.location.hash) {
-        if (document.querySelector(window.location.hash)) {
-          setTimeout(() => {
-            let section = document.querySelector(window.location.hash);
-            let scrollMarginTop = getComputedStyle(section).scrollMarginTop;
-            window.scrollTo({
-              top: section.offsetTop - parseInt(scrollMarginTop),
-              behavior: "smooth",
-            });
-          }, 100);
-        }
+      if (window.location.hash && document.querySelector(window.location.hash)) {
+        setTimeout(() => {
+          let section = document.querySelector(window.location.hash);
+          let scrollMarginTop = getComputedStyle(section).scrollMarginTop;
+          window.scrollTo({
+            top: section.offsetTop - parseInt(scrollMarginTop),
+            behavior: "smooth",
+          });
+        }, 100);
       }
     });
 
@@ -243,13 +324,8 @@ const Index = () => {
         let section = document.querySelector(navmenulink.hash);
         if (!section) return;
         let position = window.scrollY + 200;
-        if (
-          position >= section.offsetTop &&
-          position <= section.offsetTop + section.offsetHeight
-        ) {
-          document
-            .querySelectorAll(".navmenu a.active")
-            .forEach((link) => link.classList.remove("active"));
+        if (position >= section.offsetTop && position <= section.offsetTop + section.offsetHeight) {
+          document.querySelectorAll(".navmenu a.active").forEach((link) => link.classList.remove("active"));
           navmenulink.classList.add("active");
         } else {
           navmenulink.classList.remove("active");
@@ -258,9 +334,6 @@ const Index = () => {
     }
     window.addEventListener("load", navmenuScrollspy);
     document.addEventListener("scroll", navmenuScrollspy);
-
-    AOS.init();
-    const lightbox = GLightbox({});
   }, []);
 
   const typedEl = useRef(null);
@@ -270,28 +343,25 @@ const Index = () => {
     if (typedEl.current) {
       typedInstance.current = new Typed(typedEl.current, {
         strings: [
-          "Backend Developer",
-          "REST API Developer",
-          "Software Developer",
           "Full Stack Developer",
-          "Database Designer",
-          "PostgreSQL & MySQL Expert",
+          "Laravel Developer",
+          "React & Node.js Developer",
+          "REST API Developer",
+          "Visiting Faculty",
         ],
         typeSpeed: 50,
         backSpeed: 25,
         loop: true,
       });
     }
-
-    // cleanup on unmount
     return () => {
-      if (typedInstance.current) {
-        typedInstance.current.destroy();
-      }
+      if (typedInstance.current) typedInstance.current.destroy();
     };
   }, []);
 
-  const handleDownload = () => {
+  // Put the new PDF at public/resume/Krishna_Rathaur_Resume.pdf (or change the path here)
+  const handleDownload = (e) => {
+    e.preventDefault();
     const link = document.createElement("a");
     link.href = "/resume/Krishna_Rathaur_Resume.pdf";
     link.download = "Krishna_Rathaur_Resume.pdf";
@@ -302,127 +372,25 @@ const Index = () => {
 
   return (
     <>
-      {/* Preloader */}
-      {/* <div id="preloader"></div> */}
       <div>
-        <header
-          id="header"
-          className="header dark-background d-flex flex-column justify-content-center"
-        >
+        <header id="header" className="header dark-background d-flex flex-column justify-content-center">
           <i className="header-toggle d-xl-none bi bi-list" />
           <div className="header-container d-flex flex-column align-items-start">
             <nav id="navmenu" className="navmenu">
               <ul>
-                <li>
-                  <a href="#hero" className="active">
-                    <i className="bi bi-house navicon" />
-                    Home
-                  </a>
-                </li>
-                <li>
-                  <a href="#about">
-                    <i className="bi bi-person navicon" /> About
-                  </a>
-                </li>
-                <li>
-                  <a href="#resume">
-                    <i className="bi bi-file-earmark-text navicon" /> Resume
-                  </a>
-                </li>
-                <li>
-                  <a href="#portfolio">
-                    <i className="bi bi-images navicon" /> Portfolio
-                  </a>
-                </li>
-                {/* <li>
-                  <a href="#services">
-                    <i className="bi bi-hdd-stack navicon" /> Services
-                  </a>
-                </li> */}
-                {/* <li className="dropdown">
-                  <a href="#">
-                    <i className="bi bi-menu-button navicon" />{" "}
-                    <span>Dropdown</span>{" "}
-                    <i className="bi bi-chevron-down toggle-dropdown" />
-                  </a>
-                  <ul>
-                    <li>
-                      <a href="#">Dropdown 1</a>
-                    </li>
-                    <li className="dropdown">
-                      <a href="#">
-                        <span>Deep Dropdown</span>{" "}
-                        <i className="bi bi-chevron-down toggle-dropdown" />
-                      </a>
-                      <ul>
-                        <li>
-                          <a href="#">Deep Dropdown 1</a>
-                        </li>
-                        <li>
-                          <a href="#">Deep Dropdown 2</a>
-                        </li>
-                        <li>
-                          <a href="#">Deep Dropdown 3</a>
-                        </li>
-                        <li>
-                          <a href="#">Deep Dropdown 4</a>
-                        </li>
-                        <li>
-                          <a href="#">Deep Dropdown 5</a>
-                        </li>
-                      </ul>
-                    </li>
-                    <li>
-                      <a href="#">Dropdown 2</a>
-                    </li>
-                    <li>
-                      <a href="#">Dropdown 3</a>
-                    </li>
-                    <li>
-                      <a href="#">Dropdown 4</a>
-                    </li>
-                  </ul>
-                </li> */}
-                <li>
-                  <a href="#contact">
-                    <i className="bi bi-envelope navicon" /> Contact
-                  </a>
-                </li>
+                {navItems.map(([href, icon, label], i) => (
+                  <li key={href}>
+                    <a href={href} className={i === 0 ? "active" : undefined}>
+                      <i className={`bi ${icon} navicon`} /> {label}
+                    </a>
+                  </li>
+                ))}
               </ul>
             </nav>
-            <div className="social-links text-center">
-              <a href="https://github.com/dev-kanhaiya" className="google-plus">
-                <i className="bi bi-github" />
-              </a>
-              <a
-                href="https://www.linkedin.com/in/krishna-rathaur"
-                className="linkedin"
-              >
-                <i className="bi bi-linkedin" />
-              </a>
-              <a
-                href="https://www.instagram.com/kanhaiya.14581?igsh=d3UwOXU4cDN6N3Aw"
-                className="instagram"
-              >
-                <i className="bi bi-instagram" />
-              </a>
-              <a
-                href="https://wa.me/918368003925"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="whatsapp"
-              >
-                <i className="bi bi-whatsapp" />
-              </a>
-              <a
-                className="envelope"
-                href="mailto:kanhaiyarathore375@gmail.com?subject=Job%20Opportunity&body=Hi%20Kanhaiya,%0D%0A%0D%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20connect."
-              >
-                <i className="bi bi-envelope"></i>
-              </a>
-            </div>
+            <SocialLinks className="social-links text-center" />
           </div>
         </header>
+
         <main className="main">
           {/* Hero Section */}
           <section id="hero" className="hero section">
@@ -433,84 +401,33 @@ const Index = () => {
             <div className="hero-content">
               <div className="container">
                 <div className="row align-items-center">
-                  <div
-                    className="col-lg-6"
-                    data-aos="fade-right"
-                    data-aos-delay={100}
-                  >
+                  <div className="col-lg-6" data-aos="fade-right" data-aos-delay={100}>
                     <div className="hero-text">
                       <h1>
                         I'm <span className="accent-text">Krishna</span>
                       </h1>
-                      <h2>Kanhaiya</h2>
-                      {/* <p className="lead">I'm a <span className="typed" data-typed-items="UI/UX Designer, Web Developer, Brand Strategist, Creative Director" /></p> */}
+                      <h2>Rathaur</h2>
                       <p className="lead">
                         I'm a <span ref={typedEl}></span>
                       </p>
                       <p className="description">
-                        Passionate backend developer skilled in PHP, JavaScript,
-                        Express.js, Next.js, and database management. I enjoy
-                        building reliable server-side solutions that connect
-                        modern frontends with robust backends.
+                        Full Stack Developer with 1+ year of experience building and deploying
+                        production web applications with Laravel, React.js, Node.js and MySQL.
+                        I build secure REST APIs, role-based admin panels and payment-integrated
+                        platforms, and I host them on VPS with Nginx and CI/CD.
                       </p>
-
                       <div className="hero-actions">
-                        <a href="#portfolio" className="btn btn-primary">
-                          View My Work
-                        </a>
-                        <a href="#contact" className="btn btn-outline">
-                          Get In Touch
-                        </a>
+                        <a href="#portfolio" className="btn btn-primary">View My Work</a>
+                        <a href="#contact" className="btn btn-outline">Get In Touch</a>
                       </div>
-                      <div className="social-links">
-                        <a
-                          href="https://github.com/dev-kanhaiya"
-                          className="google-plus"
-                        >
-                          <i className="bi bi-github" />
-                        </a>
-                        <a
-                          href="https://www.linkedin.com/in/krishna-rathaur"
-                          className="linkedin"
-                        >
-                          <i className="bi bi-linkedin" />
-                        </a>
-                        <a
-                          href="https://www.instagram.com/kanhaiya.14581?igsh=d3UwOXU4cDN6N3Aw"
-                          className="instagram"
-                        >
-                          <i className="bi bi-instagram" />
-                        </a>
-                        <a
-                          href="https://wa.me/918368003925"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="whatsapp"
-                        >
-                          <i className="bi bi-whatsapp" />
-                        </a>
-                        <a
-                          className="envelope"
-                          href="mailto:kanhaiyarathore375@gmail.com?subject=Job%20Opportunity&body=Hi%20Kanhaiya,%0D%0A%0D%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20connect."
-                        >
-                          <i className="bi bi-envelope"></i>
-                        </a>
-                      </div>
+                      <SocialLinks className="social-links" />
                     </div>
                   </div>
-                  <div
-                    className="col-lg-6"
-                    data-aos="fade-left"
-                    data-aos-delay={200}
-                  >
+                  <div className="col-lg-6" data-aos="fade-left" data-aos-delay={200}>
                     <div className="hero-visual">
                       <div className="profile-container">
                         <div className="profile-background" />
-                        <img
-                          src="img/profile/profile-3.png"
-                          alt="Kanhaiya"
-                          className="profile-image"
-                        />
+                        <img src="img/profile/profile-3.png" alt="Krishna Rathaur" className="profile-image" />
                       </div>
                     </div>
                   </div>
@@ -518,39 +435,28 @@ const Index = () => {
               </div>
             </div>
           </section>
-          {/* /Hero Section */}
+
           {/* About Section */}
           <section id="about" className="about section">
             <div className="container" data-aos="fade-up" data-aos-delay={100}>
               <div className="row">
-                <div
-                  className="col-lg-5"
-                  data-aos="zoom-in"
-                  data-aos-delay={200}
-                >
+                <div className="col-lg-5" data-aos="zoom-in" data-aos-delay={200}>
                   <div className="profile-card">
                     <div className="profile-header">
                       <div className="profile-image">
-                        <img
-                          src="img/profile/profile-2.png"
-                          alt="Profile Image"
-                          className="img-fluid"
-                        />
+                        <img src="img/profile/profile-2.png" alt="Krishna Rathaur" className="img-fluid" />
                       </div>
                       <div className="profile-badge">
                         <i className="bi bi-check-circle-fill" />
                       </div>
                     </div>
                     <div className="profile-content">
-                      <h3>Kanhaiya</h3>
-                      <p className="profession">Backend Developer</p>
+                      <h3>Krishna Rathaur</h3>
+                      <p className="profession">Full Stack Developer</p>
                       <div className="contact-links">
-                        <a
-                          href="mailto:kanhaiyarathore375@gmail.com?subject=Job%20Opportunity&body=Hi%20Kanhaiya,%0D%0A%0D%0AI%20found%20your%20portfolio%20and%20would%20like%20to%20connect."
-                          className="contact-item"
-                        >
+                        <a href={MAILTO} className="contact-item">
                           <i className="bi bi-envelope" />
-                          kanhaiyarathore375@gmail.com
+                          {EMAIL}
                         </a>
                         <a href="tel:+918368003925" className="contact-item">
                           <i className="bi bi-telephone" />
@@ -564,37 +470,29 @@ const Index = () => {
                     </div>
                   </div>
                 </div>
-                <div
-                  className="col-lg-7"
-                  data-aos="fade-left"
-                  data-aos-delay={300}
-                >
+                <div className="col-lg-7" data-aos="fade-left" data-aos-delay={300}>
                   <div className="about-content">
                     <div className="section-header">
                       <span className="badge-text">About</span>
-                      <h2>
-                        Passionate About Building Reliable and Efficient Backend
-                        Solutions
-                      </h2>
+                      <h2>Building Secure, Scalable Web Applications, From Database to Deployment</h2>
                     </div>
                     <div className="description">
                       <p>
-                        I am a software developer with hands-on experience in
-                        backend development using PHP, JavaScript, Express.js,
-                        Next.js, and databases like MySQL and PostgreSQL. I
-                        enjoy building reliable, secure, and scalable solutions
-                        that connect modern frontends with robust backends.
+                        I am a Full Stack Developer with 1+ year of experience in Laravel, PHP,
+                        React.js, Node.js and MySQL. I have delivered secure REST APIs, role-based
+                        access control, admin panels and payment-integrated platforms across
+                        e-learning, fintech and e-commerce, and contributed fixes and enhancements
+                        to about 20 live websites.
                       </p>
                       <p>
-                        Through my projects, I have gained practical experience
-                        in REST API development, database management, and
-                        server-side logic, and I am eager to contribute my
-                        skills to real-world applications.
+                        I also set up and manage hosting: VPS setup, Nginx reverse proxy and CI/CD
+                        pipelines. Alongside development, I serve as Visiting Faculty at HRIT
+                        University, Ghaziabad, teaching web development to 50+ BCA students.
                       </p>
                     </div>
                     <div className="stats-grid">
                       <div className="stat-item">
-                        <div className="stat-number">5+</div>
+                        <div className="stat-number">6+</div>
                         <div className="stat-label">Projects Completed</div>
                       </div>
                       <div className="stat-item">
@@ -602,31 +500,25 @@ const Index = () => {
                         <div className="stat-label">Years Experience</div>
                       </div>
                       <div className="stat-item">
-                        <div className="stat-number">98%</div>
-                        <div className="stat-label">Client Satisfaction</div>
+                        <div className="stat-number">50+</div>
+                        <div className="stat-label">Students Taught</div>
                       </div>
                     </div>
                     <div className="details-grid">
                       <div className="detail-row">
                         <div className="detail-item">
                           <span className="detail-label">Specialization</span>
-                          <span className="detail-value">
-                            Backend Development & Web Applications
-                          </span>
+                          <span className="detail-value">Full Stack Development (Laravel, React, Node.js)</span>
                         </div>
                         <div className="detail-item">
-                          <span className="detail-label">Experience Level</span>
-                          <span className="detail-value">
-                            Aspiring Backend Developer
-                          </span>
+                          <span className="detail-label">Current Role</span>
+                          <span className="detail-value">Visiting Faculty, HRIT University</span>
                         </div>
                       </div>
                       <div className="detail-row">
                         <div className="detail-item">
                           <span className="detail-label">Education</span>
-                          <span className="detail-value">
-                            BCA, Aadhunik Group of Institutions, Ghaziabad
-                          </span>
+                          <span className="detail-value">BCA, Aadhunik Group of Institutions, Ghaziabad</span>
                         </div>
                         <div className="detail-item">
                           <span className="detail-label">Languages</span>
@@ -635,11 +527,7 @@ const Index = () => {
                       </div>
                     </div>
                     <div className="cta-section">
-                      <a
-                        href="#"
-                        onClick={handleDownload}
-                        className="btn btn-primary"
-                      >
+                      <a href="#" onClick={handleDownload} className="btn btn-primary">
                         <i className="bi bi-download" />
                         Download Resume
                       </a>
@@ -653,46 +541,31 @@ const Index = () => {
               </div>
             </div>
           </section>
-          {/* /About Section */}
+
           {/* Skills Section */}
           <section id="skills" className="skills section">
-            {/* Section Title */}
             <div className="container section-title" data-aos="fade-up">
               <h2>Skills</h2>
-              <p>
-                Necessitatibus eius consequatur ex aliquid fuga eum quidem sint
-                consectetur velit
-              </p>
+              <p>The technologies I use to build, deploy and maintain production web applications.</p>
             </div>
-            {/* End Section Title */}
             <div className="container" data-aos="fade-up" data-aos-delay={100}>
               <div className="row">
                 {Object.entries(skillsData).map(([category, skills], idx) => (
-                  <div className="col-lg-6" key={category}>
-                    <div
-                      className="skills-category"
-                      data-aos="fade-up"
-                      data-aos-delay={200 + idx * 100}
-                    >
-                      <h3>
-                        {category === "frontend"
-                          ? "Front-end Development"
-                          : "Back-end Development"}
-                      </h3>
+                  <div className="col-lg-4" key={category}>
+                    <div className="skills-category" data-aos="fade-up" data-aos-delay={200 + idx * 100}>
+                      <h3>{categoryTitles[category]}</h3>
                       <div className="skills-animation">
                         {skills.map((skill, i) => (
                           <div className="skill-item mb-3" key={i}>
                             <div className="d-flex justify-content-between align-items-center">
                               <h4>{skill.name}</h4>
-                              <span className="skill-percentage">
-                                {skill.percent}%
-                              </span>
+                              <span className="skill-percentage">{skill.percent}%</span>
                             </div>
                             <div className="progress">
                               <div
                                 className="progress-bar"
                                 role="progressbar"
-                                style={{ width: `${skill.percent}%` }} // <-- This line is required
+                                style={{ width: `${skill.percent}%` }}
                                 aria-valuenow={skill.percent}
                                 aria-valuemin={0}
                                 aria-valuemax={100}
@@ -708,62 +581,46 @@ const Index = () => {
               </div>
             </div>
           </section>
-          {/* /Skills Section */}
+
           {/* Resume Section */}
           <section id="resume" className="resume section">
-            {/* Section Title */}
             <div className="container section-title" data-aos="fade-up">
               <h2>Resume</h2>
               <p>
-                BCA student and passionate backend developer with hands-on
-                experience in PHP, JavaScript, Node.js, Express.js, React,
-                Next.js, MySQL, and PostgreSQL. Skilled in building robust,
-                secure, and scalable web applications.
+                Full Stack Developer with 1+ year of experience building and deploying web
+                applications with Laravel, React.js, Node.js and MySQL. Visiting Faculty teaching
+                web development.
               </p>
             </div>
 
-            {/* End Section Title */}
             <div className="container" data-aos="fade-up" data-aos-delay={100}>
               <div className="row gy-4">
-                {/* Left column with summary and contact */}
                 <div className="col-lg-4">
-                  <div
-                    className="resume-side"
-                    data-aos="fade-right"
-                    data-aos-delay={100}
-                  >
+                  <div className="resume-side" data-aos="fade-right" data-aos-delay={100}>
                     <div className="profile-img mb-4">
-                      <img
-                        src="img/profile/profile-2.png"
-                        alt="Profile"
-                        className="img-fluid rounded"
-                      />
+                      <img src="img/profile/profile-2.png" alt="Profile" className="img-fluid rounded" />
                     </div>
 
                     <h3>Professional Summary</h3>
                     <p>
-                      Dedicated backend developer with practical experience in
-                      building REST APIs, server-side logic, and database
-                      management. Passionate about solving real-world problems
-                      through clean, reliable code.
+                      Full Stack Developer delivering secure REST APIs, role-based access control,
+                      admin panels and payment-integrated platforms. Sets up VPS hosting with Nginx
+                      and CI/CD pipelines.
                     </p>
 
                     <h3 className="mt-4">Contact Information</h3>
                     <ul className="contact-info list-unstyled">
                       <li>
-                        <i className="bi bi-geo-alt" /> Ghaziabad, Uttar
-                        Pradesh, India
+                        <i className="bi bi-geo-alt" /> Ghaziabad, Uttar Pradesh, India
                       </li>
                       <li>
-                        <i className="bi bi-envelope" />{" "}
-                        kanhaiyarathore375@gmail.com
+                        <i className="bi bi-envelope" /> {EMAIL}
                       </li>
                       <li>
                         <i className="bi bi-phone" /> +91 8368003925
                       </li>
                       <li>
-                        <i className="bi bi-linkedin" />{" "}
-                        www.linkedin.com/in/krishna-rathaur
+                        <i className="bi bi-linkedin" /> linkedin.com/in/krishna-rathaur
                       </li>
                       <li>
                         <i className="bi bi-github" /> github.com/dev-kanhaiya
@@ -772,114 +629,56 @@ const Index = () => {
 
                     <div className="skills-animation mt-4">
                       <h3>Technical Skills</h3>
-                      <div className="skill-item">
-                        <div className="d-flex justify-content-between">
-                          <span>PHP</span>
-                          <span>80%</span>
+                      {sidebarSkills.map(([name, percent]) => (
+                        <div className="skill-item" key={name}>
+                          <div className="d-flex justify-content-between">
+                            <span>{name}</span>
+                            <span>{percent}%</span>
+                          </div>
+                          <div className="progress">
+                            <div
+                              className="progress-bar"
+                              style={{ width: `${percent}%` }}
+                              role="progressbar"
+                              aria-valuenow={percent}
+                              aria-valuemin={0}
+                              aria-valuemax={100}
+                            />
+                          </div>
                         </div>
-                        <div className="progress">
-                          <div
-                            className="progress-bar"
-                            style={{ width: "80%" }}
-                            role="progressbar"
-                            aria-valuenow={75}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                      </div>
-                      <div className="skill-item">
-                        <div className="d-flex justify-content-between">
-                          <span>JavaScript</span>
-                          <span>85%</span>
-                        </div>
-                        <div className="progress">
-                          <div
-                            className="progress-bar"
-                            style={{ width: "85%" }}
-                            role="progressbar"
-                            aria-valuenow={85}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                      </div>
-                      <div className="skill-item">
-                        <div className="d-flex justify-content-between">
-                          <span>React.js</span>
-                          <span>80%</span>
-                        </div>
-                        <div className="progress">
-                          <div
-                            className="progress-bar"
-                            style={{ width: "80%" }}
-                            role="progressbar"
-                            aria-valuenow={80}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                      </div>
-                      <div className="skill-item">
-                        <div className="d-flex justify-content-between">
-                          <span>MySQL/PostgreSQL</span>
-                          <span>72%</span>
-                        </div>
-                        <div className="progress">
-                          <div
-                            className="progress-bar"
-                            style={{ width: "75%" }}
-                            role="progressbar"
-                            aria-valuenow={72}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                          />
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
                 </div>
 
-                {/* Right column with experience and education */}
                 <div className="col-lg-8 ps-4 ps-lg-5">
-                  {/* Experience / Projects Section */}
                   <div className="resume-section" data-aos="fade-up">
                     <h3>
                       <i className="bi bi-briefcase me-2" />
-                      Projects
+                      Experience
                     </h3>
-
-                    <div className="resume-item">
-                      <h4>Attendance Management System</h4>
-                      <h5>PHP | MySQL | JS</h5>
-                      <ul>
-                        <li>Role-based login for Admin & Users</li>
-                        <li>CRUD operations via REST APIs</li>
-                        <li>Secure authentication and attendance management</li>
-                      </ul>
-                    </div>
-
-                    <div className="resume-item">
-                      <h4>Personal Portfolio Website</h4>
-                      <h5>React | Express.js | PostgreSQL</h5>
-                      <ul>
-                        <li>
-                          Responsive portfolio showcasing projects and skills
-                        </li>
-                        <li>
-                          Dynamic contact form integrated with backend and
-                          database
-                        </li>
-                      </ul>
-                    </div>
+                    {experience.map((job) => (
+                      <ResumeItem
+                        key={job.role + job.period}
+                        title={job.role}
+                        subtitle={job.org}
+                        period={job.period}
+                        points={job.points}
+                      />
+                    ))}
                   </div>
 
-                  {/* Education Section */}
-                  <div
-                    className="resume-section"
-                    data-aos="fade-up"
-                    data-aos-delay={100}
-                  >
+                  <div className="resume-section" data-aos="fade-up">
+                    <h3>
+                      <i className="bi bi-code-slash me-2" />
+                      Key Projects
+                    </h3>
+                    {resumeProjects.map((p) => (
+                      <ResumeItem key={p.name} title={p.name} subtitle={p.stack} points={p.points} />
+                    ))}
+                  </div>
+
+                  <div className="resume-section" data-aos="fade-up" data-aos-delay={100}>
                     <h3>
                       <i className="bi bi-mortarboard me-2" />
                       Education
@@ -888,8 +687,7 @@ const Index = () => {
                       <h4>Bachelor of Computer Applications (BCA)</h4>
                       <h5>2024 – Present (2nd Year)</h5>
                       <p>
-                        Aadhunik Group of Institutions, Duhai, Ghaziabad
-                        (Affiliated to CCS University, Meerut)
+                        Aadhunik Group of Institutions, Duhai, Ghaziabad (Affiliated to CCS University, Meerut)
                       </p>
                     </div>
                     <div className="resume-item">
@@ -907,20 +705,17 @@ const Index = () => {
               </div>
             </div>
           </section>
-          {/* /Resume Section */}
+
           {/* Portfolio Section */}
           <section id="portfolio" className="portfolio section">
-            {/* Section Title */}
             <div className="container section-title" data-aos="fade-up">
               <h2>Portfolio</h2>
               <p>
-                A selection of my backend and full-stack projects, showcasing
-                practical experience with PHP, JavaScript, React, Next.js,
-                Express, MySQL, and PostgreSQL.
+                A selection of my full-stack and backend projects built with Laravel, React,
+                Node.js and MySQL.
               </p>
             </div>
 
-            {/* Isotope Layout Wrapper */}
             <div
               className="container isotope-layout"
               data-default-filter="*"
@@ -930,17 +725,10 @@ const Index = () => {
               data-aos-delay={100}
             >
               <div className="row">
-                {/* Sidebar Filters */}
                 <div className="col-lg-3 filter-sidebar">
-                  <div
-                    className="filters-wrapper"
-                    data-aos="fade-right"
-                    data-aos-delay={150}
-                  >
+                  <div className="filters-wrapper" data-aos="fade-right" data-aos-delay={150}>
                     <ul className="portfolio-filters isotope-filters">
-                      <li data-filter="*" className="filter-active">
-                        All Projects
-                      </li>
+                      <li data-filter="*" className="filter-active">All Projects</li>
                       <li data-filter=".filter-frontend">Frontend</li>
                       <li data-filter=".filter-backend">Backend</li>
                       <li data-filter=".filter-fullstack">Full-Stack</li>
@@ -948,112 +736,72 @@ const Index = () => {
                   </div>
                 </div>
 
-                {/* Portfolio Items */}
                 <div className="col-lg-9">
                   <div
                     className="row gy-4 portfolio-container isotope-container"
                     data-aos="fade-up"
                     data-aos-delay={200}
                   >
-                    {/* Personal Portfolio Website */}
-                    <div className="col-lg-6 col-md-6 portfolio-item isotope-item filter-frontend">
-                      <div className="portfolio-wrap">
-                        <img
-                          src="img/portfolio/portfolio.jpeg"
-                          className="img-fluid"
-                          alt="Personal Portfolio Website"
-                        />
-                        <div className="portfolio-info">
-                          <div className="content">
-                            <span className="category">Frontend</span>
-                            <h4 className="text-white">
-                              Personal Portfolio Website
-                            </h4>
-                            <div className="portfolio-links">
-                              <a
-                                href="img/portfolio/portfolio.jpeg"
-                                className="glightbox"
-                                title="Personal Portfolio Website"
-                              >
-                                <i className="bi bi-plus-lg" />
-                              </a>
-                              <a href="#" title="More Details">
-                                <i className="bi bi-arrow-right" />
-                              </a>
+                    {portfolioItems.map((item) => (
+                      <div
+                        key={item.title}
+                        className={`col-lg-6 col-md-6 portfolio-item isotope-item ${item.filter}`}
+                      >
+                        <div className="portfolio-wrap">
+                          <img src={item.img} className="img-fluid" alt={item.title} />
+                          <div className="portfolio-info">
+                            <div className="content">
+                              <span className="category">{item.category}</span>
+                              <h4 className="text-white">{item.title}</h4>
+                              <div className="portfolio-links">
+                                <a href={item.img} className="glightbox" title={item.title}>
+                                  <i className="bi bi-plus-lg" />
+                                </a>
+                                <a
+                                  href={item.link}
+                                  title="View project"
+                                  target={item.link === "#" ? undefined : "_blank"}
+                                  rel="noopener noreferrer"
+                                >
+                                  <i className="bi bi-arrow-right" />
+                                </a>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    {/* Attendance Management System */}
-                    <div className="col-lg-6 col-md-6 portfolio-item isotope-item filter-backend">
-                      <div className="portfolio-wrap">
-                        <img
-                          src="img/portfolio/portfolio-attendance.jpeg"
-                          className="img-fluid"
-                          alt="Attendance Management System"
-                        />
-                        <div className="portfolio-info">
-                          <div className="content">
-                            <span className="category">Backend</span>
-                            <h4 className="text-white">
-                              Attendance Management System
-                            </h4>
-                            <div className="portfolio-links">
-                              <a
-                                href="img/portfolio/portfolio-attendance.jpeg"
-                                className="glightbox"
-                                title="Attendance Management System"
-                              >
-                                <i className="bi bi-plus-lg" />
-                              </a>
-                              <a
-                                href="https://kanhaiya-dev.gt.tc/"
-                                title="More Details"
-                              >
-                                <i className="bi bi-arrow-right" />
-                              </a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+                    ))}
                   </div>
-                  {/* End Portfolio Container */}
                 </div>
               </div>
             </div>
           </section>
 
-          {/* /Portfolio Section */}
-
           {/* Contact Section */}
           <section id="contact" className="contact section">
-            {/* Section Title */}
             <div className="container section-title" data-aos="fade-up">
               <h2>Contact</h2>
               <p>
-                Looking for exciting Backend Development opportunities. Let’s
-                connect and build something great together!
+                Open to Full Stack and Backend Development opportunities. Let's connect and build
+                something great together!
               </p>
             </div>
-            {/* End Section Title */}
             <div className="container">
               <div className="row g-4 g-lg-5">
                 <div className="col-lg-5">
                   <div className="info-box">
                     <h3>Contact Info</h3>
                     <p>
-                      I’d love to connect! Whether it’s a project, a question,
-                      or a potential role, don’t hesitate to get in touch.
+                      I'd love to connect! Whether it's a project, a question, or a potential role,
+                      don't hesitate to get in touch.
                     </p>
                     <div className="info-item">
                       <div className="icon-box">
                         <i className="bi bi-geo-alt" />
                       </div>
                       <div className="content">
-                        <h4>Our Location</h4>
-                        <p>Indrapuram </p>
+                        <h4>Location</h4>
+                        <p>Indrapuram</p>
                         <p>Ghaziabad, 201014</p>
                       </div>
                     </div>
@@ -1072,7 +820,7 @@ const Index = () => {
                       </div>
                       <div className="content">
                         <h4>Email Address</h4>
-                        <p>kanhaiyarathore375@gmail.com</p>
+                        <p>{EMAIL}</p>
                       </div>
                     </div>
                   </div>
@@ -1080,42 +828,17 @@ const Index = () => {
                 <div className="col-lg-7">
                   <div className="contact-form">
                     <h3>Get In Touch</h3>
-                    <p>
-                      Let’s connect! I’m open to new challenges and
-                      opportunities in Backend Development.
-                    </p>
-                    <form
-                      action="forms/contact.php"
-                      method="post"
-                      className="php-email-form"
-                    >
+                    <p>Let's connect! I'm open to new challenges and opportunities in web development.</p>
+                    <form action="forms/contact.php" method="post" className="php-email-form">
                       <div className="row gy-4">
                         <div className="col-md-6">
-                          <input
-                            type="text"
-                            name="name"
-                            className="form-control"
-                            placeholder="Your Name"
-                            required
-                          />
+                          <input type="text" name="name" className="form-control" placeholder="Your Name" required />
                         </div>
-                        <div className="col-md-6 ">
-                          <input
-                            type="email"
-                            className="form-control"
-                            name="email"
-                            placeholder="Your Email"
-                            required
-                          />
+                        <div className="col-md-6">
+                          <input type="email" className="form-control" name="email" placeholder="Your Email" required />
                         </div>
                         <div className="col-12">
-                          <input
-                            type="text"
-                            className="form-control"
-                            name="subject"
-                            placeholder="Subject"
-                            required
-                          />
+                          <input type="text" className="form-control" name="subject" placeholder="Subject" required />
                         </div>
                         <div className="col-12">
                           <textarea
@@ -1130,12 +853,8 @@ const Index = () => {
                         <div className="col-12 text-center">
                           <div className="loading">Loading</div>
                           <div className="error-message" />
-                          <div className="sent-message">
-                            Your message has been sent. Thank you!
-                          </div>
-                          <button type="submit" className="btn">
-                            Send Message
-                          </button>
+                          <div className="sent-message">Your message has been sent. Thank you!</div>
+                          <button type="submit" className="btn">Send Message</button>
                         </div>
                       </div>
                     </form>
@@ -1144,39 +863,28 @@ const Index = () => {
               </div>
             </div>
           </section>
-          {/* /Contact Section */}
         </main>
+
         <footer id="footer" className="footer position-relative">
           <div className="container">
-            <div className="copyright text-center ">
+            <div className="copyright text-center">
               <p>
-                © <span>Copyright</span>{" "}
-                <strong className="px-1 sitename">dev-kanhaiya</strong>{" "}
+                © <span>Copyright</span> <strong className="px-1 sitename">Krishna Rathaur</strong>{" "}
                 <span>All Rights Reserved</span>
               </p>
             </div>
             <div className="credits">
-              {/* All the links in the footer should remain intact. */}
-              {/* You can delete the links only if you've purchased the pro version. */}
-              {/* Licensing information: https://bootstrapmade.com/license/ */}
-              {/* Purchase the pro version with working PHP/AJAX contact form: [buy-url] */}
               Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a>
             </div>
           </div>
         </footer>
-        {/* Scroll Top */}
-        <a
-          href="#"
-          id="scroll-top"
-          className="scroll-top d-flex align-items-center justify-content-center"
-        >
+
+        <a href="#" id="scroll-top" className="scroll-top d-flex align-items-center justify-content-center">
           <i className="bi bi-arrow-up-short" />
         </a>
-
-        {/* Vendor JS Files */}
-        {/* Main JS File */}
       </div>
     </>
   );
 };
+
 export default Index;

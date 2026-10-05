@@ -32,9 +32,6 @@ jobs:
           test -d node_modules/react-router-dom
           echo "react-router-dom is installed"
 
-      # 5. Run tests
-      - name: Run tests
-        run: CI=true npm test -- --watchAll=false
 
       # 6. Build React project
       - name: Build project

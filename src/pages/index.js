@@ -164,11 +164,11 @@ const resumeProjects = [
 
 // Add matching screenshots in public/img/portfolio/ (file names below).
 const portfolioItems = [
-  { title: "EduLife", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-edulife.jpeg", link: "https://edulife.sg" },
-  { title: "DigiBuggy", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-digibuggy.jpeg", link: "https://digibuggy.com" },
-  { title: "IQFin Policy Management", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-iqfin.jpeg", link: "https://iqfin.in" },
-  { title: "Inventory Management System", category: "Backend", filter: "filter-backend", img: "img/portfolio/portfolio-inventory.jpeg", link: "https://iqfin.in/inventory" },
-  { title: "Raftaar", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-raftaar.jpeg", link: "#" },
+  { title: "EduLife", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-edulife.png", link: "https://edulife.sg" },
+  { title: "DigiBuggy", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-digibuggy.png", link: "https://digibuggy.com" },
+  { title: "IQFin Policy Management", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-iqfin.png", link: "https://iqfin.in" },
+  { title: "Inventory Management System", category: "Backend", filter: "filter-backend", img: "img/portfolio/portfolio-inventory.png", link: "https://iqfin.in/inventory" },
+  { title: "Raftaar", category: "Full-Stack", filter: "filter-fullstack", img: "img/portfolio/portfolio-raftaar.png", link: "#" },
   { title: "Attendance Management System", category: "Backend", filter: "filter-backend", img: "img/portfolio/portfolio-attendance.jpeg", link: "https://kanhaiya-dev.gt.tc/" },
   { title: "Personal Portfolio Website", category: "Frontend", filter: "filter-frontend", img: "img/portfolio/portfolio.jpeg", link: "#" },
 ];

@@ -404,7 +404,7 @@ const Index = () => {
                   <div className="col-lg-6" data-aos="fade-right" data-aos-delay={100}>
                     <div className="hero-text">
                       <h1>
-                        I'm <span className="accent-text">Hello</span>
+                        I'm <span className="accent-text">Krishna</span>
                       </h1>
                       <h2>Rathaur</h2>
                       <p className="lead">
